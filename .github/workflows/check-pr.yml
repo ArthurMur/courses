@@ -1,0 +1,19 @@
+name: Pull requests check # Название работы, выполняемой при проверке Pull Request'ов
+
+on:
+  pull_request: # Событие, при котором будет запущен этот workflow - открытие Pull Request'а
+
+jobs:
+  lint: # Определение задачи "lint"
+    runs-on: ubuntu-latest # Задача будет выполняться на операционной системе Ubuntu
+
+    steps: # Шаги, выполняемые в рамках задачи
+      - uses: actions/checkout@v4 # Шаг: получение кода из репозитория
+      - uses: actions/setup-node@v3 # Шаг: настройка среды выполнения Node.js
+        with:
+          node-version: 20.x.x # Версия Node.js, которая будет установлена
+          cache: npm # Кэширование зависимостей npm для повышения производительности
+      - run: npm ci # Шаг: установка зависимостей проекта с использованием npm ci (для точной установки зависимостей из package-lock.json)
+      - run: npm run lint # Шаг: запуск линтера для проверки стиля кода
+      - run: npm run lint:types # Шаг: запуск проверки типов (если используется TypeScript)
+      - run: npm run test # Шаг: запуск тестов проекта
