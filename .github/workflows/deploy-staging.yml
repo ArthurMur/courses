@@ -1,0 +1,38 @@
+name: deploy staging # Название workflow для деплоя на staging-сервер
+
+on:
+  push: # Событие, при котором будет запущен этот workflow - push (обновление) в ветку
+    branches:
+      - main # Этот workflow будет запускаться только при обновлении ветки main
+
+jobs:
+  lint: # Задача для проверки кода
+    runs-on: ubuntu-latest # Задача будет выполняться на операционной системе Ubuntu
+
+    steps: # Шаги, выполняемые в рамках задачи
+      - uses: actions/checkout@v4 # Шаг: получение кода из репозитория
+      - uses: actions/setup-node@v3 # Шаг: настройка среды выполнения Node.js
+        with:
+          node-version: 20.x.x # Версия Node.js, которая будет установлена
+          cache: npm # Кэширование зависимостей npm для повышения производительности
+      - run: npm ci # Шаг: установка зависимостей проекта с использованием npm ci (для точной установки зависимостей из package-lock.json)
+      - run: npm run lint # Шаг: запуск линтера для проверки стиля кода
+      - run: npm run lint:types # Шаг: запуск проверки типов (если используется TypeScript)
+      - run: npm run test # Шаг: запуск тестов проекта
+
+  deploy: # Задача для деплоя на staging-сервер
+    needs: lint # Задача deploy зависит от завершения задачи lint
+    runs-on: ubuntu-latest # Задача будет выполняться на операционной системе Ubuntu
+    concurrency: # Настройка параллельности выполнения задач
+      group: staging # Группировка задач для параллельного выполнения
+      cancel-in-progress: true # Отмена выполнения предыдущего деплоя, если он еще не завершен
+
+    steps: # Шаги, выполняемые в рамках задачи
+      - name: SSH Command # Название шага: SSH Command
+        uses: D3rHase/ssh-command-action@v0.2.2 # Использование действия для выполнения команд по SSH
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }} # Хост (адрес) staging-сервера, получаемый из секретов репозитория
+          user: ${{ secrets.STAGING_SSH_USERNAME }} # Имя пользователя для подключения по SSH, получаемое из секретов репозитория
+          private_key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }} # Приватный SSH-ключ, получаемый из секретов репозитория
+          host_fingerprint: ${{ secrets.STAGING_SSH_FINGERPRINT }} # Отпечаток (fingerprint) сервера SSH, получаемый из секретов репозитория
+          command: source ~/.nvm/nvm.sh; echo 'Hello world' # Команда для выполнения на staging-сервере (чтобы работали node и npm, надо зупустить nvm )
