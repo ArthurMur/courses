@@ -57,7 +57,7 @@ export function CreateCourseForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Название </FormLabel>
+              <FormLabel>Название курса </FormLabel>
               <FormControl>
                 <Input placeholder="Название..." {...field} />
               </FormControl>
@@ -71,7 +71,7 @@ export function CreateCourseForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Описание</FormLabel>
+              <FormLabel>Описание курса</FormLabel>
               <FormControl>
                 <Textarea placeholder="Описание..." {...field} />
               </FormControl>
