@@ -35,4 +35,4 @@ jobs:
           user: ${{ secrets.STAGING_SSH_USERNAME }} # Имя пользователя для подключения по SSH, получаемое из секретов репозитория
           private_key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }} # Приватный SSH-ключ, получаемый из секретов репозитория
           host_fingerprint: ${{ secrets.STAGING_SSH_FINGERPRINT }} # Отпечаток (fingerprint) сервера SSH, получаемый из секретов репозитория
-          command: source ~/.nvm/nvm.sh; echo 'Hello world' # Команда для выполнения на staging-сервере (чтобы работали node и npm, надо зупустить nvm )
+          command: source ~/.nvm/nvm.sh; ~/deploy.sh # Команда для выполнения на staging-сервере (чтобы работали node и npm, надо зупустить nvm )
