@@ -12,7 +12,7 @@ import { Input } from '@/shared/ui/input';
 import { Spinner } from '@/shared/ui/spinner';
 import { useEmailSignIn } from '../_vm/use-email-sign-in';
 
-// Компонент формы входа через Email/*  */
+// Компонент формы входа через Email
 export function EmailSignInForm() {
   // Инициализация хука useForm с указанием начальных значений
   const form = useForm<{ email: string }>({
