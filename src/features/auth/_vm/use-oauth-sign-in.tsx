@@ -12,7 +12,9 @@ export function useOAuthSignIn(provider: ClientSafeProvider) {
   const oauthSignInMutation = useMutation({
     // Функция мутации, вызывающая вход через OAuth
     mutationFn: () =>
-      signIn(provider.id, { callbackUrl: callbackUrl ?? undefined }), // Вызов функции входа с указанием провайдера и URL обратного вызова
+      signIn(provider.id, {
+        callbackUrl: callbackUrl ?? undefined,
+      }), // Вызов функции входа с указанием провайдера и URL обратного вызова
   });
 
   // Возврат объекта с состоянием загрузки мутации и функцией для выполнения входа через OAuth
