@@ -6,13 +6,13 @@ test('create delete course list', async ({ page }) => {
   // Переход на главную страницу
   await page.goto('/');
   // Клик по полю для ввода названия курса
-  await page.getByPlaceholder('название').click();
+  await page.getByPlaceholder('Название...').click();
   // Ввод текста 'Test course' в поле для ввода названия курса
-  await page.getByPlaceholder('название').fill('Test course');
+  await page.getByPlaceholder('Название...').fill('Test course');
   // Клик по полю для ввода описания курса
-  await page.getByPlaceholder('описание').click();
+  await page.getByPlaceholder('Описание...').click();
   // Ввод текста 'Test description' в поле для ввода описания курса
-  await page.getByPlaceholder('описание').fill('Test description');
+  await page.getByPlaceholder('Описание...').fill('Test description');
   // Клик по кнопке 'Добавить'
   await page.getByRole('button', { name: 'Добавить' }).click();
   // Ожидание появления элемента с текстом 'Test courseTest descriptionУдалить'
