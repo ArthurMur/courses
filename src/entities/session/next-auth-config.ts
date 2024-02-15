@@ -10,6 +10,11 @@ import { privateConfig } from '@/shared/config/private';
 export const nextAuthConfig: AuthOptions = {
   // Установка адаптера для работы с базой данных
   adapter: PrismaAdapter(dbClient) as AuthOptions['adapter'],
+  pages: {
+    signIn: '/auth/sign-in',
+    newUser: '/auth/new-user',
+    verifyRequest: '/auth/verify-request',
+  },
   // Поставщики аутентификации, созданные на основе приватной конфигурации Github
   providers: compact([
     EmailProvider({
