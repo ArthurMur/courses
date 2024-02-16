@@ -10,53 +10,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Модель для курса
 model Course {
-  id String @id @default(cuid())
-  name String
+  id          String @id @default(cuid())
+  name        String
   description String
 }
 
+// Модель для учетной записи
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid()) // Идентификатор учетной записи
+  userId            String // Идентификатор пользователя
+  type              String // Тип учетной записи
+  provider          String // Поставщик учетной записи
+  providerAccountId String // Идентификатор учетной записи поставщика
+  refresh_token     String? @db.Text // Токен обновления (необязательное поле)
+  access_token      String? @db.Text // Токен доступа (необязательное поле)
+  expires_at        Int? // Время истечения
+  token_type        String? // Тип токена
+  scope             String? // Область
+  id_token          String? @db.Text // Токен идентификатора (необязательное поле)
+  session_state     String? // Состояние сессии
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Связь с пользователем
 
-  @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId]) // Уникальный индекс по поставщику и идентификатору учетной записи
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid()) // Идентификатор сессии
+  sessionToken String   @unique // Уникальный токен сессии
+  userId       String // Идентификатор пользователя
+  expires      DateTime // Время истечения
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Связь с пользователем
 }
 
+// Модель для пользователя
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id            String    @id @default(cuid()) // Идентификатор пользователя
+  email         String    @unique // Почта пользователя
+  role          ROLE      @default(USER) // Роль пользователя
+  name          String? // Имя пользователя (необязательное поле)
+  emailVerified DateTime? // Дата подтверждения почты
+  image         String? // Ссылка на изображение пользователя
+  accounts      Account[] // Учетные записи пользователя
+  sessions      Session[] // Сессии пользователя
 }
 
+// Модель для токена верификации
 model VerificationToken {
-  identifier String
-  token      String  
-  expires    DateTime
+  identifier String // Идентификатор
+  token      String   @unique // Токен
+  expires    DateTime // Время истечения
 
-  @@unique([identifier, token])
+  @@unique([identifier, token]) // Уникальный индекс по идентификатору и токену
+}
+
+// Перечисление для ролей
+enum ROLE {
+  ADMIN
+  USER
 }
