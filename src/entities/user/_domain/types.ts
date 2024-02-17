@@ -6,6 +6,8 @@ export const ROLES: Record<Role, Role> = {
   USER: 'USER', // Роль пользователя
 };
 
+// Используем на бэке для бизнес-логики
+
 export type UserEntity = {
   id: UserId; // Идентификатор пользователя
   email: string; // Почта пользователя
@@ -24,4 +26,12 @@ export type SessionEntity = {
     image?: string | null; // Ссылка на изображение пользователя, может быть null
   };
   expires: string; // Дата и время истечения сессии
+};
+
+// Проекции, с ними будем взаимодействовать на клиенте
+
+export type Profile = {
+  email: string;
+  name?: string | null;
+  image?: string | null;
 };

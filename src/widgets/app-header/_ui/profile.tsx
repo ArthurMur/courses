@@ -11,11 +11,11 @@ import {
 import { LogOut, User } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar';
-import { useAppSession, useRole } from '@/entities/user/session.client';
 import { useSignOut } from '@/features/auth/use-sign-out';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { SignInButton } from '@/features/auth/sign-in-button';
+import { ProfileAvatar, getProfileDisplayName } from '@/entities/user/profile';
+import { useAppSession } from '@/entities/user/session';
 
 export function Profile() {
   const session = useAppSession();
@@ -29,6 +29,8 @@ export function Profile() {
     return <SignInButton />;
   }
 
+  const user = session?.data?.user;
+
   return (
     // Компонент выпадающего меню для профиля пользователя
     <DropdownMenu>
@@ -40,11 +42,7 @@ export function Profile() {
           className="p-px rounded-full self-center h-8 w-8"
         >
           {/* Аватар пользователя */}
-          <Avatar className="w-8 h-8">
-            <AvatarImage src={session.data?.user?.image ?? undefined} />
-            {/* Показывается в случае, если не удалось загрузить аватар */}
-            <AvatarFallback>АМ</AvatarFallback>
-          </Avatar>
+          <ProfileAvatar profile={user} className="h-8 w-8" />
         </Button>
       </DropdownMenuTrigger>
       {/* Содержимое выпадающего меню */}
@@ -55,7 +53,7 @@ export function Profile() {
           <p>Мой аккаунт</p>
           {/* Дополнительная информация о пользователе */}
           <p className="text-xs text-muted-foreground overflow-hidden text-ellipsis">
-            {session?.data?.user?.name}
+            {user ? getProfileDisplayName(user) : undefined}
           </p>
         </DropdownMenuLabel>
         {/* Группа элементов меню */}
