@@ -10,6 +10,8 @@ const privateConfigSchema = z.object({
   EMAIL_SERVER_HOST: z.string(),
   EMAIL_SERVER_PORT: z.string(),
   EMAIL_FROM: z.string(),
+
+  ADMIN_EMAILS: z.string().optional(),
 });
 
 // Парсинг приватной конфигурации из переменных среды с использованием заданной схемы данных

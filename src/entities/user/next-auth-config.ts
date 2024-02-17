@@ -5,11 +5,32 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { dbClient } from '@/shared/lib/db';
 import { compact } from 'lodash-es';
 import { privateConfig } from '@/shared/config/private';
+import { createUserUseCase } from './_use-cases/create-user';
+
+const prismaAdapter = PrismaAdapter(dbClient);
 
 // Конфигурация аутентификации NextAuth
 export const nextAuthConfig: AuthOptions = {
   // Установка адаптера для работы с базой данных
-  adapter: PrismaAdapter(dbClient) as AuthOptions['adapter'],
+  adapter: {
+    // Переопределям адаптер на свой createUser
+    ...prismaAdapter,
+    createUser: (user) => {
+      return createUserUseCase.exec(user);
+    },
+  } as AuthOptions['adapter'],
+  callbacks: {
+    session: async ({ session, user }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          role: user.role,
+        },
+      };
+    },
+  },
   pages: {
     signIn: '/auth/sign-in',
     newUser: '/auth/new-user',
