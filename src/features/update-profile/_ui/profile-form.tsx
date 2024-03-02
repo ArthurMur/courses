@@ -15,31 +15,44 @@ import {
 } from '@/shared/ui/form';
 import { Input } from '@/shared/ui/input';
 import { Spinner } from '@/shared/ui/spinner';
-import { AvatarField } from './avatar-filed';
+import { AvatarField } from './avatar-field';
+import { Profile } from '@/entities/user/profile';
 
 const profileFormSchema = z.object({
+  // Проверьте длину имени пользователя
   name: z
     .string()
     .max(30, {
       message: 'Username must not be longer than 30 characters.',
     })
+    // Удалить пробелы из имени пользователя
     .transform((name) => name.trim())
     .optional(),
+  // Подтвердить формат электронной почты
   email: z.string().email().optional(),
+  // Проверьте формат изображения
   image: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export function ProfileForm({
+  profile,
   onSuccess,
   submitText = 'Сохранить',
 }: {
-  onSuccess?: () => void;
+  profile: Profile;
+  onSuccess?: () => void; // Обратный вызов при успешной отправке формы
   submitText?: string;
 }) {
   const form = useForm<ProfileFormValues>({
+    // Резолвер для значений формы
     resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      email: profile.email,
+      image: profile.image ?? undefined,
+      name: profile.name ?? '',
+    },
   });
 
   return (

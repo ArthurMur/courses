@@ -3,7 +3,6 @@ import { createId } from '@/shared/lib/id';
 import { userRepository } from '../_repositories/user.repository';
 import { privateConfig } from '@/shared/config/private';
 
-// Определяем тип для данных, необходимых для создания пользователя
 type CreateUser = {
   email: string;
   name?: string | null;

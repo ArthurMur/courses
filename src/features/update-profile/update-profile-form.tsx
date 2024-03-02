@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ProfileForm } from './_ui/profile-form';
 import { Spinner } from '@/shared/ui/spinner';
-import { useRouter } from 'next/navigation';
+import { getProfileQuery } from '@/entities/user/profile';
 
 export function UpdateProfileForm({
   userId,
@@ -11,17 +11,19 @@ export function UpdateProfileForm({
   userId: string;
   callbackUrl?: string;
 }) {
-  if (false) {
+  const profileQuery = useQuery({ ...getProfileQuery(userId) });
+
+  if (profileQuery.isPending) {
     return <Spinner aria-label="Загрузка профиля" />;
   }
 
-  if (false) {
+  if (!profileQuery.data) {
     return <div>Не удалось загрузить профиль, возможно у вас нет прав</div>;
   }
 
   return (
     <ProfileForm
-      // profile={profile}
+      profile={profileQuery.data.profile}
       // onSuccess={handleSuccess}
       submitText={callbackUrl ? 'Продолжить' : 'Сохранить'}
     />
