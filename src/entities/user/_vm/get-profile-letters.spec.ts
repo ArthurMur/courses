@@ -73,9 +73,9 @@ describe('get profile letters', () => {
   test('should work with short names', () => {
     const res = getProfileLetters({
       email: 'admin@gmail.com',
-      name: 'E',
+      name: 'A',
     });
 
-    expect(res).toEqual('E'); // Проверка, что результат соответствует ожидаемому значению 'E'
+    expect(res).toEqual('A'); // Проверка, что результат соответствует ожидаемому значению 'E'
   });
 });

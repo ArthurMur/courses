@@ -65,7 +65,7 @@ export function Profile() {
           {/* Пункт меню для перехода на страницу профиля */}
           <DropdownMenuItem asChild>
             {/* Ссылка на страницу профиля */}
-            <Link href={`/profile/1`}>
+            <Link href={`/profile/${user?.id}`}>
               {/* Иконка профиля */}
               <User className="mr-2 h-4 w-4" />
               {/* Текст пункта меню */}
