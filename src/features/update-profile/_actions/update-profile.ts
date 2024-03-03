@@ -1,11 +1,13 @@
 'use server';
+
 import { z } from 'zod';
-import { getUserUseCase } from '../_use-cases/get-user';
-import { getAppSessionStrictServer } from '../session.server';
-import { profileSchema } from '../_domain/schema';
+import { profileSchema } from '@/entities/user/_domain/schema';
+import { getAppSessionStrictServer } from '@/entities/user/session.server';
+import { updateProfileUseCase } from '@/entities/user/profile.server';
 
 const propsSchema = z.object({
   userId: z.string(),
+  data: profileSchema.partial(),
 });
 
 // Валидируем выходное значение
@@ -14,18 +16,19 @@ const resultSchema = z.object({
 });
 
 // получение профиля пользователя
-export const getUserProfileAction = async (
+export const updateProfileAction = async (
   props: z.infer<typeof propsSchema>
 ) => {
   // Получение идентификатора пользователя из свойств
-  const { userId } = propsSchema.parse(props);
+  const { userId, data } = propsSchema.parse(props);
 
   // Получение строгой сессии приложения
   const session = await getAppSessionStrictServer();
 
   // Использование GetUserUseCase для получения профиля пользователя
-  const user = await getUserUseCase.exec({
+  const user = await updateProfileUseCase.exec({
     session,
+    data,
     userId,
   });
 
