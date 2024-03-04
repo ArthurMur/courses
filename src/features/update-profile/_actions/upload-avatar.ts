@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { AVATAR_FILE_KEY } from '../_constants';
 import { BadRequest } from '@/shared/lib/errors';
+import { fileStorage } from '@/shared/lib/file-storage';
 
 // Валидируем выходное значение
 const resultSchema = z.object({
@@ -20,5 +21,9 @@ export const uploadAvatarAction = async (formData: FormData) => {
     throw new BadRequest();
   }
 
-  console.log();
+  const storedFile = await fileStorage.uploadImage(file, 'avatar');
+
+  return resultSchema.parse({
+    avatar: storedFile,
+  });
 };
