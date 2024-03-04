@@ -1,17 +1,46 @@
 version: '3'
 
 services:
-  db:
-    image: postgres
-    restart: always
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
+  db: # Сервис базы данных
+    image: postgres # Образ PostgreSQL
+    restart: always # Перезапускать всегда, если произошел сбой
+    ports: # Перенаправление портов
+      - 5432:5432 # Порт хоста:порт контейнера
+    environment: # Переменные среды
+      - POSTGRES_USER=postgres # Имя пользователя PostgreSQL
+      - POSTGRES_PASSWORD=postgres # Пароль пользователя PostgreSQL
+      - POSTGRES_DB=postgres # Имя базы данных PostgreSQL
+    volumes: # Тома
+      - db-data:/var/lib/postgresql/data # Примонтированный том для данных PostgreSQL
+  minio: # Сервис MinIO
+    image: minio/minio:latest # Образ MinIO
+    entrypoint: sh # Точка входа для контейнера
+    ports: # Перенаправление портов
+      - '9000:9000' # Порт хоста:порт контейнера
+      - '9001:9001' # Порт хоста:порт контейнера
+    command: -c 'minio server --console-address ":9001" /data' # Команда запуска MinIO сервера
+    environment: # Переменные среды
+      MINIO_ROOT_USER: minio # Имя пользователя администратора MinIO
+      MINIO_ROOT_PASSWORD: minio123 # Пароль администратора MinIO
+    volumes: # Тома
+      - minio-data:/data # Примонтированный том для данных MinIO
+    healthcheck: # Проверка состояния
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live'] # Команда проверки доступности
+      interval: 30s # Интервал проверки
+      timeout: 20s # Таймаут проверки
+      retries: 3 # Количество попыток
+  createbuckets: # Сервис для создания бакетов в MinIO
+    image: minio/mc # Образ утилиты mc для MinIO
+    depends_on: # Зависимости
+      - minio # Зависит от сервиса MinIO
+    entrypoint: > # Многострочная точка входа
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 minio minio123;
+      /usr/bin/mc mb myminio/images;
+      /usr/bin/mc anonymous set public myminio/images;
+      exit 0;
+      "
 
-volumes:
-  db-data:
+volumes: # Тома
+  db-data: # Том для данных базы данных
+  minio-data: # Том для данных MinIO
