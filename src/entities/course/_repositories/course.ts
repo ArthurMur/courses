@@ -1,6 +1,7 @@
 import { cache } from 'react';
 import { CourseEntity } from '../_domain/types';
 import { contentApi } from '@/shared/api/content';
+import { logger } from '@/shared/lib/logger';
 
 class CoursesRepository {
   // Получение списка курсов
@@ -29,8 +30,15 @@ class CoursesRepository {
     );
 
     // проход по полученным курсам и фильтрация отклоненных
-    setteldCourses.forEach((value) => {
+    setteldCourses.forEach((value, i) => {
+      // Проверка, не отклонен ли статус курса
       if (value.status === 'rejected') {
+        // Реегистрация сообщения об ошибке с указанием слага, ошибки и причины.
+        logger.error({
+          msg: 'Course by slug not found',
+          slug: manifest.courses[i],
+          error: value.reason,
+        });
       }
     });
 

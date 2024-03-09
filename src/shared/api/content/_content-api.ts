@@ -8,6 +8,8 @@ import lessonSchema from './_schemas/lesson.schema.json';
 import { Course } from './_schemas/course.schema';
 import { Lesson } from './_schemas/lesson.schema';
 import { Manifest } from './_schemas/manifest.schema';
+import { loggedMethod } from '@/shared/lib/logger';
+import { pick } from 'lodash-es';
 
 interface Deps {
   cacheStrategy: CacheStrategy;
@@ -35,15 +37,19 @@ export class ContentApi {
    * Выполняет запрос через CacheStrategy, парсит результат через ContentParser
    * и возвращает объект типа Manifest
    */
+
   async fetchManifest() {
-    const fetchData = async () => {
-      // Получить манифест по URL-адресу
-      const text = await this.d.fileFetcher.fetchText(this.getManifestUrl());
-      // Разобрать содержимое манифеста
-      return await this.d.contentParser.parse<Manifest>(text, manifestSchema);
-    };
-    // Вернем манифест из кеша или получим его, если его в кеше нет.
-    return this.d.cacheStrategy.fetch(['manifest'], fetchData);
+    // Получаем манифест из кэша, если его там нет, то выполняем запрос на его получение
+    return this.d.cacheStrategy.fetch(['manifest'], () =>
+      this.fetchManifestQuey()
+    );
+  }
+
+  @loggedMethod({ logRes: (res: Manifest) => res })
+  private async fetchManifestQuey() {
+    // Получаем текст манифеста по URL и парсим его в объект Manifest
+    const text = await this.d.fileFetcher.fetchText(this.getManifestUrl());
+    return await this.d.contentParser.parse<Manifest>(text, manifestSchema);
   }
 
   /**
@@ -53,14 +59,22 @@ export class ContentApi {
    * @param slug - слаг курса
    */
   async fetchCourse(slug: CourseSlug) {
-    const fetchData = async () => {
-      // Получить курс по URL-адресу
-      const text = await this.d.fileFetcher.fetchText(this.getCourseUrl(slug));
-      // Разобрать содержимое курса
-      return await this.d.contentParser.parse<Course>(text, courseSchema);
-    };
-    // Вернем курс из кеша или получим его, если его в кеше нет.
-    return this.d.cacheStrategy.fetch(['course', slug], fetchData);
+    // Получаем курс из кэша, если его там нет, то выполняем запрос на его получение
+    return this.d.cacheStrategy.fetch(['course', slug], () =>
+      this.fetchCourseQuery(slug)
+    );
+  }
+
+  @loggedMethod({
+    // Логируем входные аргументы - slug
+    logArgs: (slug: CourseSlug) => ({ slug }), // Логируем результат запроса, оставляя только id, title и slug
+    logRes: (res: Course, slug) =>
+      pick({ ...res, slug }, ['id', 'title', 'slug']),
+  })
+  private async fetchCourseQuery(slug: string) {
+    // Получаем текст курса по URL и парсим его в объект Course
+    const text = await this.d.fileFetcher.fetchText(this.getCourseUrl(slug));
+    return await this.d.contentParser.parse<Course>(text, courseSchema);
   }
 
   /**
@@ -71,20 +85,29 @@ export class ContentApi {
    * @param lessonSlug - слаг урока
    */
   async fetchLesson(courseSlug: CourseSlug, lessonSlug: LessonSlug) {
-    // Получить данные из API
-    const fetchData = async () => {
-      // Получить текст из API
-      const text = await this.d.fileFetcher.fetchText(
-        this.getLessonUrl(courseSlug, lessonSlug)
-      );
-      // Разобрать текст в объект урока
-      return await this.d.contentParser.parse<Lesson>(text, lessonSchema);
-    };
-    // Вернем урок из кеша или получим его, если его в кеше нет.
-    return this.d.cacheStrategy.fetch(
-      ['lesson', courseSlug, lessonSlug],
-      fetchData
+    // Получаем урок из кэша, если его там нет, то выполняем запрос на его получение
+    return this.d.cacheStrategy.fetch(['lesson', courseSlug, lessonSlug], () =>
+      this.fetchLessonQuery(courseSlug, lessonSlug)
     );
+  }
+
+  @loggedMethod({
+    // Логируем входные аргументы - courseSlug и lessonSlug
+    logArgs: (courseSlug: CourseSlug, lessonSlug: LessonSlug) => ({
+      courseSlug,
+      lessonSlug,
+    }), // Логируем результат запроса, оставляя только id, title и slug
+    logRes: (res: Lesson) => pick(res, ['id', 'title', 'slug']),
+  })
+  private async fetchLessonQuery(
+    courseSlug: CourseSlug,
+    lessonSlug: LessonSlug
+  ) {
+    // Получаем текст урока по URL и парсим его в объект Lesson
+    const text = await this.d.fileFetcher.fetchText(
+      this.getLessonUrl(courseSlug, lessonSlug)
+    );
+    return await this.d.contentParser.parse<Lesson>(text, lessonSchema);
   }
 
   /**

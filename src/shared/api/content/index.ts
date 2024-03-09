@@ -23,8 +23,10 @@ const reactQueryCacheStrategy = new ReactQueryCacheStrategy();
 /**
  * Создаём стратегию кеширования, которая ничего не кеширует,
  * но при этом не делает запросов к Github API.
+ * Это полезно в dev-среде, чтобы не загружать данные из репозитория
+ * при каждом обновлении страницы в браузере.
  */
-const dummyCacheStrategy = new DummyCacheStrategy();
+const dummyCacheStrategy = new DummyCacheStrategy(); //<1> Создаём стратегию, которая ничего не кеширует
 
 /**
  * Создаём API для работы с данными курса.
