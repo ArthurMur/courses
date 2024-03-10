@@ -8,9 +8,13 @@ import { useUploadAvatar } from '../_vm/use-upload-avatar';
 export function AvatarField({
   value,
   onChange,
+  name,
+  email,
 }: {
   value?: string;
   onChange: (value?: string) => void;
+  name: string;
+  email: string;
 }) {
   const { handleFileSelect, isPending } = useUploadAvatar({
     onSuccess: onChange,
@@ -30,7 +34,11 @@ export function AvatarField({
       )}
       <ProfileAvatar
         className="w-full h-full"
-        profile={{ email: 'evgeny.paromov@gmail.com', image: value }}
+        profile={{
+          name,
+          email,
+          image: value,
+        }}
       />
     </Button>
   );
