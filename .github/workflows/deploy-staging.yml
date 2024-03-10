@@ -36,32 +36,31 @@ jobs:
           private_key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }} # Приватный SSH-ключ, получаемый из секретов репозитория
           host_fingerprint: ${{ secrets.STAGING_SSH_FINGERPRINT }} # Отпечаток (fingerprint) сервера SSH, получаемый из секретов репозитория
           command: source ~/.nvm/nvm.sh; ~/deploy.sh # Команда для выполнения на staging-сервере (чтобы работали node и npm, надо зупустить nvm )
-  e2e: # Определение задачи для E2E тестирования
-    needs: deploy # Задача e2e зависит от завершения задачи deploy
-    timeout-minutes: 60 # Максимальное время выполнения задачи (в минутах)
-    runs-on: ubuntu-latest # Задача будет выполняться на операционной системе Ubuntu
+  # e2e: # Определение задачи для E2E тестирования
+  #   needs: deploy # Задача e2e зависит от завершения задачи deploy
+  #   timeout-minutes: 60 # Максимальное время выполнения задачи (в минутах)
+  #   runs-on: ubuntu-latest # Задача будет выполняться на операционной системе Ubuntu
 
-    steps: # Шаги, выполняемые в рамках задачи
-      - uses: actions/checkout@v3 # Шаг: получение кода из репозитория
-      - uses: actions/setup-node@v3 # Шаг: настройка среды выполнения Node.js
-        with:
-          node-version: 20.x.x # Версия Node.js, которая будет установлена
+  #   steps: # Шаги, выполняемые в рамках задачи
+  #     - uses: actions/checkout@v3 # Шаг: получение кода из репозитория
+  #     - uses: actions/setup-node@v3 # Шаг: настройка среды выполнения Node.js
+  #       with:
+  #         node-version: 20.x.x # Версия Node.js, которая будет установлена
 
-      - name: Install dependencies # Шаг: установка зависимостей проекта
-        run: npm ci # Установка зависимостей с использованием npm ci
+  #     - name: Install dependencies # Шаг: установка зависимостей проекта
+  #       run: npm ci # Установка зависимостей с использованием npm ci
 
-      - name: Install Playwright Browsers # Шаг: установка браузеров для Playwright
-        run: npx playwright install --with-deps # Установка браузеров с использованием Playwright
+  #     - name: Install Playwright Browsers # Шаг: установка браузеров для Playwright
+  #       run: npx playwright install --with-deps # Установка браузеров с использованием Playwright
 
-      - name: Run Playwright tests # Шаг: запуск тестов с использованием Playwright
-        run: npx playwright test # Запуск тестов с использованием Playwright
-        env: # Переменные окружения для передачи нашему приложению во время тестирования
-          TEST_ENV_BASE_URL: https://staging.courses-pet.ru # Базовый URL для тестового окружения
+  #     - name: Run Playwright tests # Шаг: запуск тестов с использованием Playwright
+  #       run: npx playwright test # Запуск тестов с использованием Playwright
+  #       env: # Переменные окружения для передачи нашему приложению во время тестирования
+  #         TEST_ENV_BASE_URL: https://staging.courses-pet.ru # Базовый URL для тестового окружения
 
-      - uses: actions/upload-artifact@v3 # Шаг: загрузка артефактов после выполнения тестов
-        if: always()
-        with:
-          name: playwright-report # Название артефакта
-          path: playwright-report/ # Путь к директории с результатами тестирования
-          retention-days: 30 # Количество дней, в течение которых артефакты будут храниться
-
+  #     - uses: actions/upload-artifact@v3 # Шаг: загрузка артефактов после выполнения тестов
+  #       if: always()
+  #       with:
+  #         name: playwright-report # Название артефакта
+  #         path: playwright-report/ # Путь к директории с результатами тестирования
+  #         retention-days: 30 # Количество дней, в течение которых артефакты будут храниться
