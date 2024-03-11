@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Платформа для обучения "Courses"
 
-## Getting Started
+## [Ссылка на сайт](https://staging.courses-pet.ru/)
 
-First, run the development server:
+Это веб-приложение, где вы можете найти различные курсы, зарегистрироваться и управлять своим профилем. Платформа развернута с использованием CI/CD для обеспечения плавной и непрерывной доставки новых функций и исправлений ошибок.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Реализованные возможности на данный момент
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Аутентификация**: Пользователи могут регистрироваться и авторизовываться с помощью своего аккаунта GitHub или электронной почты. Для обработки аутентификации используется NextAuth.js.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Профиль пользователя**: После регистрации пользователи могут обновлять информацию в своем профиле.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Настройка темы**: Платформа поддерживает настройку темы. Пользователи могут переключаться между различными темами в соответствии со своими предпочтениями.
 
-## Learn More
+- **Курсы**: На платформе представлено описание курса.
 
-To learn more about Next.js, take a look at the following resources:
+## Стек технологий
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Проект создан с использованием следующих технологий:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Next.js**: Фреймворк React для создания приложений с серверным рендерингом.
 
-## Deploy on Vercel
+- **React**: Библиотека для создания пользовательских интерфейсов.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **TypeScript**: Статически типизированный JavaScript, добавляющий определения типов.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **Prisma**: Открытый набор инструментов для работы с базой данных. Используется в качестве ORM для взаимодействия с нашей базой данных.
+
+- **PostgreSQL**: Мощная объектно-реляционная система управления базами данных.
+
+- **Docker**: Платформа для автоматизации развертывания, запуска и управления приложениями в контейнерах.
+
+- **Tailwind CSS**: Фреймворк CSS с набором утилит для быстрого создания пользовательских интерфейсов.
+
+- **Jest**: Фреймворк для тестирования.
+
+- **Playwright**: Библиотека для тестирования "от и до".
+
+- **ESLint**: Утилита для линтинга.
+
+- **Prettier**: Форматтер кода с заданными настройками.
+
+- **AWS SDK**: Используется для взаимодействия с сервисами AWS, такими как S3 для хранения изображений.
+
+- **Nodemailer**: Модуль для отправки электронных писем.
+
+- **React Query**: Библиотека для синхронизации данных для React.
+
+- **Zod**: Библиотека валидации схем TypeScript в первую очередь.
+
+- **Radix UI**: Коллекция качественных доступных компонентов UI для React.
+
+- **Lodash**: Современная библиотека утилит JavaScript, предоставляющая модульность, производительность и дополнительные возможности.
+
+- **Pino**: Быстрый и гибкий логгер для Node.js.
+
+## Непрерывная интеграция и непрерывная доставка (CI/CD)
+
+В проекте используется CI/CD для автоматизации процесса развертывания. Это гарантирует, что каждое изменение в кодовой базе автоматически строится, тестируется и развертывается в производственной среде, сокращая время и усилия, необходимые для ручного развертывания.
+
+## Начало работы
+
+Чтобы запустить локальную копию, выполните следующие простые шаги:
+
+1. Склонируйте репозиторий
+2. Установите NPM пакеты
+3. Настройте переменные окружения
+4. Установите и настройте PostgreSQL
+6. Установите Docker
+7. Создайте и запустите контейнер Docker
+5. Запустите приложение
