@@ -9,7 +9,7 @@ type UpdateProfile = {
   session: SessionEntity;
 };
 
-export class UpdateProfileUseCase {
+export class UpdateProfileService {
   // Метод для обновления профиля пользователя
   async exec({ userId, session, data }: UpdateProfile): Promise<Profile> {
     // Создаем объект profileAbility для проверки прав доступа пользователя
@@ -25,4 +25,4 @@ export class UpdateProfileUseCase {
   }
 }
 
-export const updateProfileUseCase = new UpdateProfileUseCase();
+export const updateProfileService = new UpdateProfileService();

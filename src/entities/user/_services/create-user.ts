@@ -11,7 +11,7 @@ type CreateUser = {
 };
 
 // Класс для выполнения операции создания пользователя
-export class CreateUserUseCase {
+export class CreateUserService {
   async exec(data: CreateUser) {
     const adminEmails = privateConfig.ADMIN_EMAILS?.split(',') ?? []; // Получаем список администраторских email из приватной конфигурации, если они есть, иначе создаем пустой массив
     const role = adminEmails.includes(data.email) ? ROLES.ADMIN : ROLES.USER; // Проверяем, является ли email пользователя администраторским, и устанавливаем соответствующую роль
@@ -28,4 +28,4 @@ export class CreateUserUseCase {
   }
 }
 
-export const createUserUseCase = new CreateUserUseCase();
+export const createUserService = new CreateUserService();

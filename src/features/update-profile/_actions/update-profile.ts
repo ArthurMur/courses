@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { profileSchema } from '@/entities/user/_domain/schema';
 import { getAppSessionStrictServer } from '@/entities/user/session.server';
-import { updateProfileUseCase } from '@/entities/user/profile.server';
+import { updateProfileService } from '@/entities/user/profile.server';
 
 const propsSchema = z.object({
   userId: z.string(),
@@ -25,8 +25,8 @@ export const updateProfileAction = async (
   // Получение строгой сессии приложения
   const session = await getAppSessionStrictServer();
 
-  // Использование GetUserUseCase для получения профиля пользователя
-  const user = await updateProfileUseCase.exec({
+  // Использование GetUserService для получения профиля пользователя
+  const user = await updateProfileService.exec({
     session,
     data,
     userId,

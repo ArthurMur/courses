@@ -9,7 +9,7 @@ type GetUser = {
 };
 
 // Проверка прав доступа
-export class GetUserUseCase {
+export class GetUserService {
   // Получение профиля пользователя из хранилища пользователей.
   async exec({ userId, session }: GetUser): Promise<UserEntity> {
     // Пользовательская способность на основе сеанса
@@ -24,4 +24,4 @@ export class GetUserUseCase {
   }
 }
 
-export const getUserUseCase = new GetUserUseCase();
+export const getUserService = new GetUserService();
