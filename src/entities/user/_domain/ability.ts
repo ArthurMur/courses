@@ -1,7 +1,7 @@
-import { ROLES, SessionEntity, UserId } from './types';
+import { SharedSession, UserId, ROLES } from '@/kernel/domain/user';
 
 // Создание функции для проверки прав доступа пользователя на основе сессии
-export const createUserAbility = (session: SessionEntity) => ({
+export const createUserAbility = (session: SharedSession) => ({
   // Проверка права на получение информации о пользователе
   canGetUser: (userId: UserId) =>
     // Пользователь может получить информацию о себе или он является администратором
@@ -9,7 +9,7 @@ export const createUserAbility = (session: SessionEntity) => ({
 });
 
 // Создание функции для проверки прав доступа пользователя на основе сессии
-export const createProfileAbility = (session: SessionEntity) => ({
+export const createProfileAbility = (session: SharedSession) => ({
   // Проверка права на обновление профиля
   canUpdateProfile: (userId: UserId) =>
     // Пользователь может обновить свой профиль или он является администратором

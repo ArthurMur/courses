@@ -1,12 +1,14 @@
 import { AuthorizationError } from '@/shared/lib/errors';
-import { Profile, SessionEntity, UserId } from '../_domain/types';
+import { Profile } from '../_domain/types';
+import { UserId, SharedSession } from '@/kernel/domain/user';
+
 import { createProfileAbility } from '../_domain/ability';
 import { profileRepository } from '../_repositories/profile';
 
 type UpdateProfile = {
   userId: UserId;
   data: Partial<Profile>;
-  session: SessionEntity;
+  session: SharedSession;
 };
 
 export class UpdateProfileService {

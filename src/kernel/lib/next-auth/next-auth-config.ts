@@ -5,7 +5,8 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { dbClient } from '@/shared/lib/db';
 import { compact } from 'lodash-es';
 import { privateConfig } from '@/shared/config/private';
-import { createUserService } from './_services/create-user';
+import { ROLES, SharedUser } from '@/kernel/domain/user';
+import { createId } from '@/shared/lib/id';
 
 const prismaAdapter = PrismaAdapter(dbClient);
 
@@ -15,8 +16,21 @@ export const nextAuthConfig: AuthOptions = {
   adapter: {
     // Переопределям адаптер на свой createUser
     ...prismaAdapter,
-    createUser: (user) => {
-      return createUserService.exec(user);
+    createUser: async (data) => {
+      const adminEmails = privateConfig.ADMIN_EMAILS?.split(',') ?? []; // Получаем список администраторских email из приватной конфигурации, если они есть, иначе создаем пустой массив
+      const role = adminEmails.includes(data.email) ? ROLES.ADMIN : ROLES.USER; // Проверяем, является ли email пользователя администраторским, и устанавливаем соответствующую роль
+
+      // Создаем объект пользователя с помощью данных и уникального идентификатора
+      const user: SharedUser = {
+        id: createId(), // Генерируем уникальный идентификатор
+        ...data, // Добавляем остальные данные из входного объекта
+        role, // Устанавливаем роль пользователя
+      };
+
+      return await dbClient.user.create({
+        // Создание нового пользователя с использованием dbClient
+        data: user,
+      });
     },
   } as AuthOptions['adapter'],
   callbacks: {

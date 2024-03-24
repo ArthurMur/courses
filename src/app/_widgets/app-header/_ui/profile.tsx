@@ -15,7 +15,7 @@ import { useSignOut } from '@/features/auth/use-sign-out';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { SignInButton } from '@/features/auth/sign-in-button';
 import { ProfileAvatar, getProfileDisplayName } from '@/entities/user/profile';
-import { useAppSession } from '@/entities/user/session';
+import { useAppSession } from '@/kernel/lib/next-auth/client';
 
 export function Profile() {
   const session = useAppSession();

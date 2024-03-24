@@ -1,5 +1,6 @@
 import { dbClient } from '@/shared/lib/db';
-import { Profile, UserId } from '../_domain/types';
+import { Profile } from '../_domain/types';
+import { UserId } from '@/kernel/domain/user';
 
 export class ProfileRepository {
   // Метод для обновления профиля пользователя

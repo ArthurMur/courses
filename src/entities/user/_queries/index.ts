@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { getUserProfileAction } from '../_actions/get-user-profile';
-import { UserId } from '../_domain/types';
+import { UserId } from '@/kernel/domain/user';
 
 // базовый ключ для кеширования запросов
 const baseKey = 'user';
