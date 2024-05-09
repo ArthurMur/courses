@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ProfileForm } from './_ui/profile-form';
 import { Spinner } from '@/shared/ui/spinner';
-import { getProfileQuery } from '@/entities/user/profile';
+import { getProfileQuery } from '@/entities/user/client';
 import { useRouter } from 'next/navigation';
 
 // Компонент формы для обновления профиля пользователя

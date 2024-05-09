@@ -3,7 +3,9 @@ import { CourseEntity } from '../_domain/types';
 import { contentApi } from '@/shared/api/content';
 import { logger } from '@/shared/lib/logger';
 
-class CoursesRepository {
+import { injectable } from 'inversify';
+@injectable()
+export class CoursesRepository {
   // Получение списка курсов
   getCoursesList = cache(async (): Promise<CourseEntity[]> => {
     // загрузка манифеста курсов
@@ -53,5 +55,3 @@ class CoursesRepository {
       });
   });
 }
-
-export const coursesRepository = new CoursesRepository();

@@ -3,6 +3,12 @@ import { getAppSessionServer } from '../next-auth/server';
 import { SharedSession } from '@/kernel/domain/user';
 import { ZodTypeAny, z } from 'zod';
 import { createServerSideHelpers } from '@trpc/react-query/server';
+import { injectable } from 'inversify';
+
+@injectable()
+export abstract class Controller {
+  abstract router: AnyRouter;
+}
 
 // Функция создания контекста для TRPC
 export const createContext = async () => {
