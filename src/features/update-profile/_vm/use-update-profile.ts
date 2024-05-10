@@ -1,29 +1,22 @@
-import { useMutation } from '@tanstack/react-query';
-import { updateProfileAction } from '../_actions/update-profile';
 import { useAppSession } from '@/kernel/lib/next-auth/client';
-import { useInvalidateProfile } from '@/entities/user/_queries';
+import { updateProfileApi } from '../_api';
 
+// Хук для обновления профиля
 export const useUpdateProfile = () => {
-  // Получаем функцию updateSession из хука useAppSession
-  const { update: updateSession } = useAppSession();
-  // Получаем функцию invalidateProfile из хука useInvalidateProfile
-  const invalidateProfile = useInvalidateProfile();
+  const { update: updateSession } = useAppSession(); // Получаем функцию обновления сессии из хука
+  const utils = updateProfileApi.useUtils(); // Получаем утилиты из API для обновления профиля
+  const { mutateAsync, isPending } =
+    updateProfileApi.updateProfile.update.useMutation({
+      // Получаем функцию для мутации профиля и статус ожидания из API
+      async onSuccess(profile, { userId }) {
+        // Функция, вызываемая после успешного обновления профиля
+        await utils.updateProfile.get.invalidate({ userId }); // Недействительность кэша профиля для обновленного пользователя
+        await updateSession({ user: profile }); // Обновление сессии с обновленными данными пользователя
+      },
+    });
 
-  const { mutateAsync, isPending } = useMutation({
-    // Выполняем мутацию
-    mutationFn: updateProfileAction,
-    // onSuccess вызывается после успешного выполнения мутации
-    async onSuccess({ profile }, { userId }) {
-      // Инвалидируем кэш профиля пользователя с помощью функции invalidateProfile
-      await invalidateProfile(userId);
-      // Обновляем текущую сессию приложения с помощью функции updateSession
-      await updateSession({ user: profile });
-    },
-  });
-
-  // Возвращаем объект с функцией mutateAsync и флагом isPending
   return {
-    update: mutateAsync,
-    isPending,
+    update: mutateAsync, // Функция для обновления профиля
+    isPending, // Статус ожидания обновления профиля
   };
 };

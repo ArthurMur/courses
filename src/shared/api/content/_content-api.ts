@@ -45,7 +45,7 @@ export class ContentApi {
     );
   }
 
-  @loggedMethod({ logRes: (res: Manifest) => res })
+  // @loggedMethod({ logRes: (res: Manifest) => res })
   private async fetchManifestQuey() {
     // Получаем текст манифеста по URL и парсим его в объект Manifest
     const text = await this.d.fileFetcher.fetchText(this.getManifestUrl());
@@ -65,12 +65,12 @@ export class ContentApi {
     );
   }
 
-  @loggedMethod({
-    // Логируем входные аргументы - slug
-    logArgs: (slug: CourseSlug) => ({ slug }), // Логируем результат запроса, оставляя только id, title и slug
-    logRes: (res: Course, slug) =>
-      pick({ ...res, slug }, ['id', 'title', 'slug']),
-  })
+  // @loggedMethod({
+  //   // Логируем входные аргументы - slug
+  //   logArgs: (slug: CourseSlug) => ({ slug }), // Логируем результат запроса, оставляя только id, title и slug
+  //   logRes: (res: Course, slug) =>
+  //     pick({ ...res, slug }, ['id', 'title', 'slug']),
+  // })
   private async fetchCourseQuery(slug: string) {
     // Получаем текст курса по URL и парсим его в объект Course
     const text = await this.d.fileFetcher.fetchText(this.getCourseUrl(slug));
@@ -91,14 +91,14 @@ export class ContentApi {
     );
   }
 
-  @loggedMethod({
-    // Логируем входные аргументы - courseSlug и lessonSlug
-    logArgs: (courseSlug: CourseSlug, lessonSlug: LessonSlug) => ({
-      courseSlug,
-      lessonSlug,
-    }), // Логируем результат запроса, оставляя только id, title и slug
-    logRes: (res: Lesson) => pick(res, ['id', 'title', 'slug']),
-  })
+  // @loggedMethod({
+  //   // Логируем входные аргументы - courseSlug и lessonSlug
+  //   logArgs: (courseSlug: CourseSlug, lessonSlug: LessonSlug) => ({
+  //     courseSlug,
+  //     lessonSlug,
+  //   }), // Логируем результат запроса, оставляя только id, title и slug
+  //   logRes: (res: Lesson) => pick(res, ['id', 'title', 'slug']),
+  // })
   private async fetchLessonQuery(
     courseSlug: CourseSlug,
     lessonSlug: LessonSlug

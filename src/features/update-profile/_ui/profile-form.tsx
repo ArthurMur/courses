@@ -17,8 +17,8 @@ import { Input } from '@/shared/ui/input';
 import { Spinner } from '@/shared/ui/spinner';
 import { AvatarField } from './avatar-field';
 import { Profile } from '@/entities/user/client';
-import { UserId } from '@/entities/user/user';
 import { useUpdateProfile } from '../_vm/use-update-profile';
+import { UserId } from '@/kernel/domain/user';
 
 // Схема формы
 const profileFormSchema = z.object({
@@ -70,7 +70,7 @@ export function ProfileForm({
       data,
     });
 
-    form.reset(getDefaultValues(newProfile.profile));
+    form.reset(getDefaultValues(newProfile));
 
     onSuccess?.();
   });

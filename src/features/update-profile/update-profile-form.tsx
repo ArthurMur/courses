@@ -2,8 +2,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { ProfileForm } from './_ui/profile-form';
 import { Spinner } from '@/shared/ui/spinner';
-import { getProfileQuery } from '@/entities/user/client';
 import { useRouter } from 'next/navigation';
+import { updateProfileApi } from './_api';
 
 // Компонент формы для обновления профиля пользователя
 export function UpdateProfileForm({
@@ -14,7 +14,7 @@ export function UpdateProfileForm({
   callbackUrl?: string;
 }) {
   const router = useRouter();
-  const profileQuery = useQuery({ ...getProfileQuery(userId) }); // получаем данные профиля пользователя
+  const profileQuery = updateProfileApi.updateProfile.get.useQuery({ userId }); // получаем данные профиля пользователя
 
   // функция для обработки успешного обновления профиля
   const handleSuccess = () => {
@@ -34,7 +34,7 @@ export function UpdateProfileForm({
   return (
     <ProfileForm
       userId={userId}
-      profile={profileQuery.data.profile}
+      profile={profileQuery.data}
       onSuccess={handleSuccess}
       submitText={callbackUrl ? 'Продолжить' : 'Сохранить'}
     />
