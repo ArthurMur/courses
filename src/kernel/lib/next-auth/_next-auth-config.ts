@@ -5,14 +5,10 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { dbClient } from '@/shared/lib/db';
 import { compact } from 'lodash-es';
 import { privateConfig } from '@/shared/config/private';
-import { AdapterUser } from 'next-auth/adapters';
 import { injectable } from 'inversify';
+import { CreateUserService } from './_create-user-service';
 
 const prismaAdapter = PrismaAdapter(dbClient);
-
-interface CreateUserService {
-  exec(data: Omit<AdapterUser, 'id'>): Promise<AdapterUser>;
-}
 
 @injectable()
 export class NextAuthConfig {
