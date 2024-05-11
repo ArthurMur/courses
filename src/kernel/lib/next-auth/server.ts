@@ -1,14 +1,12 @@
-'use server';
-import { getServerSession } from 'next-auth';
-import { nextAuthConfig } from './next-auth-config';
-import { NeedAuthError } from '@/shared/lib/errors';
+import { ContainerModule } from 'inversify';
+import { NextAuthConfig } from './_next-auth-config';
+import { SessionService } from './_session-service';
 
-// Функция для получения сессии приложения на сервере
-export const getAppSessionServer = () => getServerSession(nextAuthConfig);
-export const getAppSessionStrictServer = async () => {
-  const session = await getAppSessionServer();
-  if (session === null) {
-    throw new NeedAuthError();
-  }
-  return session;
-};
+// Создание модуля Inversify для NextAuth
+export const NextAuthModule = new ContainerModule((bind) => {
+  // Привязка конфигурации NextAuth и сервиса сессии себе
+  bind(NextAuthConfig).toSelf();
+  bind(SessionService).toSelf();
+});
+
+export { NextAuthConfig, SessionService };

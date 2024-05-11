@@ -1,14 +1,17 @@
-import { getAppSessionServer } from '@/kernel/lib/next-auth/server';
+import { server } from '@/app/server';
+import { SessionService } from '@/kernel/lib/next-auth/server';
 import { UpdateProfileForm } from '@/features/update-profile/update-profile-form';
 import { Separator } from '@/shared/ui/separator';
 import { redirect } from 'next/navigation';
+
+const sessionService = server.get(SessionService);
 
 export default async function NewUserPage({
   searchParams,
 }: {
   searchParams: { callbackUrl?: string };
 }) {
-  const session = await getAppSessionServer(); // получаем сесиию
+  const session = await sessionService.get(); // получаем сеcсию
 
   if (!session) {
     // если нет сессии то перенаправляем на страницу входа
