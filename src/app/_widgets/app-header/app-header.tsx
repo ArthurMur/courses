@@ -15,7 +15,6 @@ export function AppHeader({
       logo={<Logo />}
       nav={<MainNav />}
       profile={isProfile && <Profile />}
-      actions={<ToggleTheme />}
     />
   );
 }
