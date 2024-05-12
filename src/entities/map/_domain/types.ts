@@ -1,47 +1,58 @@
 import { CourseId } from '@/kernel/domain/course';
 import { MapNodeId } from '@/kernel/domain/map';
 
+// Определение типов для позиции узла на карте
 export type MapNodePosition = {
-  x: number;
-  y: number;
-  zIndex?: number;
+  x: number; // Координата X
+  y: number; // Координата Y
+  zIndex?: number; // Индекс Z (необязательный)
 };
 
+// Определение типов для размеров узла на карте
 export type MapNodeDimensions = {
-  width: number; // px
-  height: number; // px
-  rotation: number; // deg
-  scale: number;
+  width: number; // Ширина в пикселях
+  height: number; // Высота в пикселях
+  rotation: number; // Поворот в градусах
+  scale: number; // Масштаб
 };
 
+// Определение типов для настроек узла на карте
 export type MapNodeSettings = {
-  hidden: boolean;
+  hidden: boolean; // Флаг скрытости
 };
 
+// Объединение базовых типов для узла на карте
 export type BaseMapNode = MapNodePosition &
   MapNodeDimensions &
   MapNodeSettings & {
-    id: MapNodeId;
+    id: MapNodeId; // Идентификатор узла
   };
 
+// Тип данных для узла, представляющего курс
 export type CourseMapNodeData = {
-  type: 'course';
-  courseId: CourseId;
+  type: 'course'; // Тип "курс"
+  courseId: CourseId; // Идентификатор курса
 };
 
+// Тип данных для узла, представляющего изображение
 export type ImageMapNodeData = {
-  type: 'image';
-  src: string;
+  type: 'image'; // Тип "изображение"
+  src: string; // Путь к изображению
 };
 
+// Объединение базового узла с данными курса
 export type CourseMapNode = BaseMapNode & CourseMapNodeData;
+// Объединение базового узла с данными изображения
 export type ImageMapNode = BaseMapNode & ImageMapNodeData;
 
+// Тип для обобщенного узла на карте, который может быть курсом или изображением
 export type MapNode = CourseMapNode | ImageMapNode;
 
+// Тип для определения типа узла на карте
 export type MapNodeType = MapNode['type'];
 
+// Константы для типов узлов на карте
 export const MAP_NODE_TYPES = {
-  COURSE: 'course' satisfies MapNodeType,
-  IMAGE: 'image' satisfies MapNodeType,
-} as const;
+  COURSE: 'course' as const, // Тип "курс"
+  IMAGE: 'image' as const, // Тип "изображение"
+};
