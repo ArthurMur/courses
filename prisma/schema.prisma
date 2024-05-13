@@ -71,3 +71,34 @@ enum ROLE {
   ADMIN
   USER
 }
+
+// Модель для узла на карте
+model MapNode {
+  id         String             @id @default(cuid()) // Уникальный идентификатор узла (генерируется по умолчанию)
+  x          Float // Координата X узла
+  y          Float // Координата Y узла
+  width      Int                @default(100) // Ширина узла по умолчанию
+  height     Int                @default(100) // Высота узла по умолчанию
+  rotation   Int                @default(0) // Угол поворота узла по умолчанию
+  scale      Float              @default(1) // Масштаб узла по умолчанию
+  hidden     Boolean // Флаг, указывающий, скрыт ли узел
+  zIndex     Int? // Z-индекс узла (необязательное поле)
+  courseData MapNodeCourseData? // Данные о курсе, связанные с узлом
+  imageData  MapNodeImageData? // Данные об изображении, связанные с узлом
+}
+
+// Модель для данных о курсе, связанных с узлом
+model MapNodeCourseData {
+  id        String   @id @default(cuid()) // Уникальный идентификатор данных о курсе (генерируется по умолчанию)
+  courseId  String   @unique // Идентификатор курса (уникальное значение)
+  mapNode   MapNode? @relation(fields: [mapNodeId], references: [id], onDelete: Cascade) // Связь с узлом карты
+  mapNodeId String?  @unique // Идентификатор узла (уникальное значение)
+}
+
+// Модель для изображения, связанного с узлом на карте
+model MapNodeImageData {
+  id        String   @id @default(cuid()) // Уникальный идентификатор изображения (генерируется по умолчанию)
+  src       String // Путь к изображению
+  mapNode   MapNode? @relation(fields: [mapNodeId], references: [id], onDelete: Cascade) // Связь с узлом карты
+  mapNodeId String?  @unique // Идентификатор узла (уникальное значение)
+}

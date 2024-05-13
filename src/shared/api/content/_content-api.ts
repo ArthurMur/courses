@@ -10,6 +10,7 @@ import { Lesson } from './_schemas/lesson.schema';
 import { Manifest } from './_schemas/manifest.schema';
 import { loggedMethod } from '@/shared/lib/logger';
 import { pick } from 'lodash-es';
+import { compileMDX } from '@/shared/lib/mdx/server';
 
 interface Deps {
   cacheStrategy: CacheStrategy;
@@ -74,7 +75,16 @@ export class ContentApi {
   private async fetchCourseQuery(slug: string) {
     // Получаем текст курса по URL и парсим его в объект Course
     const text = await this.d.fileFetcher.fetchText(this.getCourseUrl(slug));
-    return await this.d.contentParser.parse<Course>(text, courseSchema);
+    // Парсим текст курса в объект Course с помощью схемы courseSchema
+    const course = await this.d.contentParser.parse<Course>(text, courseSchema);
+
+    return {
+      ...course, // Возвращаем остальные поля объекта Course
+      description: (await compileMDX(course.description)).code, // Компилируем MDX-код описания курса в HTML-код
+      shortDescription: course.shortDescription // Если есть краткое описание курса
+        ? (await compileMDX(course.shortDescription)).code // Компилируем его MDX-код в HTML-код
+        : undefined, // В противном случае оставляем его неопределенным
+    };
   }
 
   /**
