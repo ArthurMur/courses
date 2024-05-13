@@ -2,7 +2,6 @@
 
 import { cn } from '@/shared/ui/utils';
 import ReactFlow, {
-  useNodesState,
   useEdgesState,
   Controls,
   MiniMap,
@@ -12,13 +11,9 @@ import ReactFlow, {
 import css from './flow.module.css';
 import { BG_CLASS_NAME } from '../_constant';
 import { CoursesMapNode } from '../_domain/types';
-import { coursesMapApi } from '../_api';
+import { useNodes } from '../_vm/nodes/use-nodes';
+import { customNodes } from './nodes/custom-nodes';
 
-// Начальные данные для узлов и связей в потоке данных
-const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-];
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
 // Компонент Flow, отображающий визуальный поток данных с помощью ReactFlow
@@ -27,18 +22,7 @@ export function Flow({
 }: {
   coursesMap: CoursesMapNode[]; // Типизация свойства coursesMap
 }) {
-  // Получение данных о карте курсов с помощью хука useQuery из API
-  const { data: coursesMap } = coursesMapApi.coursesMap.get.useQuery(
-    undefined,
-    {
-      initialData: defaultCoursesMap, // Исходные данные карты курсов
-    }
-  );
-
-  console.log(coursesMap); // Вывод данных о карте курсов в консоль
-
-  // Использование хуков useNodesState и useEdgesState для управления узлами и связями в потоке данных
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const { nodes, onNodesChange } = useNodes(defaultCoursesMap);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   // Возвращение JSX компонента Flow
@@ -51,6 +35,7 @@ export function Flow({
         edges={edges} // Связи между узлами
         onNodesChange={onNodesChange} // Обработчик изменения узлов
         onEdgesChange={onEdgesChange} // Обработчик изменения связей
+        nodeTypes={customNodes} // Типы узлов
       >
         <Controls // Контролы для управления потоком данных
           className={cn(
