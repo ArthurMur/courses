@@ -14,6 +14,7 @@ import { CoursesMapNode } from '../_domain/types';
 import { useNodes } from '../_vm/nodes/use-nodes';
 import { customNodes } from './nodes/custom-nodes';
 import { useCoursesMapAbility } from '../_vm/lib/use-courses-map-ability';
+import { useInitialViewportEffect } from '../_vm/flow/use-initial-viewport-effect';
 
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
@@ -24,6 +25,7 @@ export function Flow({
   coursesMap: CoursesMapNode[]; // Типизация свойства coursesMap
 }) {
   const ability = useCoursesMapAbility();
+  const { setViewport } = useInitialViewportEffect();
   const { nodes, onNodesChange } = useNodes(defaultCoursesMap);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
@@ -48,6 +50,10 @@ export function Flow({
         onNodesChange={onNodesChange} // Обработчик изменения узлов
         onEdgesChange={onEdgesChange} // Обработчик изменения связей
         nodeTypes={customNodes} // Типы узлов
+        onlyRenderVisibleElements={true}
+        onMoveEnd={(_, viewport) => {
+          setViewport(viewport);
+        }}
         {...flowProps}
       >
         <Controls // Контролы для управления потоком данных

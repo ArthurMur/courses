@@ -1,3 +1,4 @@
+import './reflect-metadata-client-side';
 import type { Metadata } from 'next';
 import './globals.css';
 import { Inter as FontSans } from 'next/font/google';
