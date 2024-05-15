@@ -25,6 +25,94 @@ export class MapNodeRepository {
     return this.mapNodeToEntity(node);
   }
 
+  // Асинхронная функция для сохранения узла на карте.
+  async saveNode({
+    id,
+    height,
+    hidden,
+    rotation,
+    scale,
+    width,
+    x,
+    y,
+    zIndex,
+    ...data
+  }: MapNode) {
+    // Создаем объект fields, содержащий только базовые поля узла.
+    const fields = {
+      height,
+      hidden,
+      rotation,
+      scale,
+      width,
+      x,
+      y,
+      zIndex,
+    };
+
+    // Выполняем операцию upsert в базе данных для узла карты.
+    const result = await dbClient.mapNode.upsert({
+      where: {
+        id,
+      },
+      // Если тип данных - изображение, создаем или обновляем соответствующий объект imageData.
+      create: {
+        id,
+        ...fields,
+        imageData:
+          data.type === MAP_NODE_TYPES.IMAGE
+            ? {
+                create: {
+                  src: data.src,
+                },
+              }
+            : undefined,
+        // Если тип данных - курс, создаем или обновляем соответствующий объект courseData.
+        courseData:
+          data.type === MAP_NODE_TYPES.COURSE
+            ? {
+                create: {
+                  courseId: data.courseId,
+                },
+              }
+            : undefined,
+      },
+      update: {
+        ...fields,
+        imageData:
+          data.type === MAP_NODE_TYPES.IMAGE
+            ? {
+                update: {
+                  src: data.src,
+                },
+              }
+            : undefined,
+        courseData:
+          data.type === MAP_NODE_TYPES.COURSE
+            ? {
+                update: {
+                  courseId: data.courseId,
+                },
+              }
+            : undefined,
+      },
+      // Включаем в результирующий объект данные о картинке и курсе.
+      include: {
+        imageData: true,
+        courseData: true,
+      },
+    });
+
+    // Преобразуем результат в сущность и возвращаем.
+    return this.mapNodeToEntity(result);
+  }
+
+  // Асинхронная функция для удаления узла по его id.
+  async deleteNode(id: MapNodeId) {
+    // Удаляем узел из базы данных.
+    return dbClient.mapNode.delete({ where: { id } });
+  }
+
   // Приватный метод для преобразования узла карты в объект сущности
   private mapNodeToEntity({
     id,
