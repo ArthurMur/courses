@@ -1,7 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { cn } from '@/shared/ui/utils';
 import { MdxCode } from '@/shared/lib/mdx';
-
+import { Toolbar } from '../toolbar';
+import { useEffect, useState } from 'react';
 import { Handle, NodeProps, Position } from 'reactflow';
 import { Card, CardHeader, CardTitle } from '@/shared/ui/card';
 import Link from 'next/link';
@@ -10,15 +11,26 @@ import { useCoursesMapAbility } from '../../../_vm/lib/use-courses-map-ability';
 
 export default function CourseNode(props: NodeProps<CourseNode>) {
   const ability = useCoursesMapAbility();
+  const canUpdateCoursesMap = ability?.canUpdateCoursesMap();
+
+  const [hasHref, setHasHref] = useState(!canUpdateCoursesMap);
+
+  useEffect(() => {
+    setTimeout(
+      () => setHasHref(canUpdateCoursesMap ? props.selected : true),
+      300
+    );
+  }, [props.selected, canUpdateCoursesMap]);
   return (
     <>
+      <Toolbar {...props} />
       {/* Добавляем ручку-приемник снизу */}
       <Handle type="target" position={Position.Bottom} />
       {/* Добавляем ручку-приемник сверху */}
       <Handle type="source" position={Position.Top} />
       {/* Оборачиваем содержимое в ссылку из Next.js */}
       <Link
-        href={`#`}
+        href={hasHref ? `/courses/${props.data.id}` : `#`}
         className="flex justify-center items-center"
         style={{
           width: `${props.data.width * props.data.scale}px`, // Ширина, зависящая от ширины узла и его масштаба
@@ -30,6 +42,7 @@ export default function CourseNode(props: NodeProps<CourseNode>) {
           className={cn(
             'shrink-0 shadow hover:shadow-lg cursor-pointer ',
             'transition-color hover:outline hover:outline-primary',
+            props.selected && canUpdateCoursesMap && 'outline-primary outline ',
             props.selected &&
               ability?.canUpdateCoursesMap() &&
               'outline-primary outline ',

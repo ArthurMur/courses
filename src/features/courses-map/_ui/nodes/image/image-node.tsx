@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { cn } from '@/shared/ui/utils';
 import type { ImageNode } from '../../../_domain/types';
+import { Toolbar } from '../toolbar';
 
 import { NodeProps } from 'reactflow';
 
 export default function ImageNode(props: NodeProps<ImageNode>) {
   return (
     <>
+      <Toolbar {...props} />
       <img
         src={props.data.src}
         className={cn(
