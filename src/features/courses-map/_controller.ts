@@ -6,17 +6,27 @@ import {
 } from '@/kernel/lib/trpc/server';
 import { injectable } from 'inversify';
 import { GetCoursesMapService } from './_services/get-courses-map';
-import { DeleteMapNodeService } from '@/entities/map/server';
 import { createCoursesMapAbility } from './_domain/ability';
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
+import {
+  UpdateMapNodeService,
+  CreateMapNodeService,
+  DeleteMapNodeService,
+} from '@/entities/map/server';
+import {
+  createCourseNodeCommandSchema,
+  mapNodeIdSchema,
+  updateCourseNodeCommandSchema,
+} from './_domain/schema';
 
 // Контроллер для работы с картой курсов.
 @injectable()
 export class CoursesMapController extends Controller {
   constructor(
     private getCoursesMapService: GetCoursesMapService,
-    private deleteMapNodeService: DeleteMapNodeService
+    private deleteMapNodeService: DeleteMapNodeService,
+    private createMapNodeService: CreateMapNodeService,
+    private updateMapNodeService: UpdateMapNodeService
   ) {
     super();
   }
@@ -34,13 +44,27 @@ export class CoursesMapController extends Controller {
       get: publicProcedure.query(() => {
         return this.getCoursesMapService.exec();
       }),
+      // Процедура для создания узла
+      createNode: this.manageMapProcedure
+        .input(createCourseNodeCommandSchema)
+        .mutation(({ input }) => {
+          revalidatePath('/map');
+          return this.createMapNodeService.exec(input);
+        }),
+      // Процедура для обновления узла
+      updateNode: this.manageMapProcedure
+        .input(updateCourseNodeCommandSchema)
+        .mutation(({ input }) => {
+          revalidatePath('/map');
+          return this.updateMapNodeService.exec(input);
+        }),
       // Процедура для удаления узла с карты.
       deleteNode: this.manageMapProcedure
-        .input(z.object({ id: z.string() }))
+        .input(mapNodeIdSchema)
         .mutation(({ input }) => {
           // После удаления узла необходимо обновить путь страницы '/map'.
           revalidatePath('/map');
-          return this.deleteMapNodeService.exec({ id: input.id });
+          return this.deleteMapNodeService.exec(input);
         }),
     }),
   });

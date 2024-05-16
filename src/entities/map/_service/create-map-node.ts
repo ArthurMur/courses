@@ -12,7 +12,7 @@ import { createId } from '@/shared/lib/id';
 import { getZIndex } from '../_domain/methods';
 
 // Определяем тип данных для команды создания узла карты
-type CreateMapNodeCommand = (MapNodeDimensions &
+export type CreateMapNodeCommand = (MapNodeDimensions &
   MapNodePosition &
   MapNodeSettings) &
   (CourseMapNodeData | ImageMapNodeData);

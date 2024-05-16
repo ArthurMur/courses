@@ -5,7 +5,7 @@ import { MapNodeId } from '@/kernel/domain/map';
 import { TRPCError } from '@trpc/server';
 
 // Определяем тип данных для команды обновления узла карты, который включает идентификатор и часть данных для обновления
-type UpdateMapNodeCommand = { id: MapNodeId } & Partial<MapNode>;
+export type UpdateMapNodeCommand = { id: MapNodeId } & Partial<MapNode>;
 
 @injectable()
 export class UpdateMapNodeService {
