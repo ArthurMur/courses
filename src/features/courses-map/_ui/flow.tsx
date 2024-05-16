@@ -15,6 +15,7 @@ import { useNodes } from '../_vm/nodes/use-nodes';
 import { customNodes } from './nodes/custom-nodes';
 import { useCoursesMapAbility } from '../_vm/lib/use-courses-map-ability';
 import { useInitialViewportEffect } from '../_vm/flow/use-initial-viewport-effect';
+import { useDeleteNode } from '../_vm/nodes/use-delete-node';
 
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
@@ -25,6 +26,8 @@ export function Flow({
   coursesMap: CoursesMapNode[]; // Типизация свойства coursesMap
 }) {
   const ability = useCoursesMapAbility();
+
+  const { deleteNode } = useDeleteNode();
   const { setViewport } = useInitialViewportEffect();
   const { nodes, onNodesChange } = useNodes(defaultCoursesMap);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -47,10 +50,13 @@ export function Flow({
       <ReactFlow
         nodes={nodes} // Узлы потока данных
         edges={edges} // Связи между узлами
-        onNodesChange={onNodesChange} // Обработчик изменения узлов
-        onEdgesChange={onEdgesChange} // Обработчик изменения связей
+        // onNodesChange={onNodesChange} // Обработчик изменения узлов
+        // onEdgesChange={onEdgesChange} // Обработчик изменения связей
         nodeTypes={customNodes} // Типы узлов
         onlyRenderVisibleElements={true}
+        onNodesDelete={(nodes) =>
+          nodes.map((node) => deleteNode({ id: node.data.id }))
+        }
         onMoveEnd={(_, viewport) => {
           setViewport(viewport);
         }}
