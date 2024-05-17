@@ -20,6 +20,7 @@ import {
 import { z } from 'zod';
 import { GetCoursesMapService } from './_services/get-courses-map';
 import { GetCoursesToAddService } from './_services/get-courses-to-add';
+import { UploadImageService } from './_services/upload-image';
 
 // Контроллер для работы с картой курсов.
 @injectable()
@@ -29,7 +30,8 @@ export class CoursesMapController extends Controller {
     private deleteMapNodeService: DeleteMapNodeService,
     private createMapNodeService: CreateMapNodeService,
     private updateMapNodeService: UpdateMapNodeService,
-    private getCoursesToAddService: GetCoursesToAddService
+    private getCoursesToAddService: GetCoursesToAddService,
+    private uploadImageService: UploadImageService
   ) {
     super();
   }
@@ -61,12 +63,6 @@ export class CoursesMapController extends Controller {
           revalidatePath('/map');
           return this.updateMapNodeService.exec(input);
         }),
-      // Процедура добавления курсов
-      coursesToAdd: this.manageMapProcedure
-        .input(z.object({ notFilterCourseId: z.string().optional() }))
-        .query(async ({ input }) => {
-          return this.getCoursesToAddService.exec(input);
-        }),
       // Процедура для удаления узла с карты.
       deleteNode: this.manageMapProcedure
         .input(mapNodeIdSchema)
@@ -74,6 +70,23 @@ export class CoursesMapController extends Controller {
           // После удаления узла необходимо обновить путь страницы '/map'.
           revalidatePath('/map');
           return this.deleteMapNodeService.exec(input);
+        }),
+      // Процедура добавления курсов
+      coursesToAdd: this.manageMapProcedure
+        .input(z.object({ notFilterCourseId: z.string().optional() }))
+        .query(async ({ input }) => {
+          return this.getCoursesToAddService.exec(input);
+        }),
+      // Процедура добавления картинки
+      uploadImage: this.manageMapProcedure
+        .input(
+          z.object({
+            dataURI: z.string(),
+            name: z.string(),
+          })
+        )
+        .mutation(async ({ input }) => {
+          return this.uploadImageService.exec(input);
         }),
     }),
   });
