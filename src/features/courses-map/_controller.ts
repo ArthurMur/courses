@@ -1,23 +1,25 @@
 import {
+  CreateMapNodeService,
+  DeleteMapNodeService,
+  UpdateMapNodeService,
+} from '@/entities/map/server';
+import {
   router,
   Controller,
   publicProcedure,
   checkAbilityProcedure,
 } from '@/kernel/lib/trpc/server';
 import { injectable } from 'inversify';
-import { GetCoursesMapService } from './_services/get-courses-map';
 import { createCoursesMapAbility } from './_domain/ability';
 import { revalidatePath } from 'next/cache';
-import {
-  UpdateMapNodeService,
-  CreateMapNodeService,
-  DeleteMapNodeService,
-} from '@/entities/map/server';
 import {
   createCourseNodeCommandSchema,
   mapNodeIdSchema,
   updateCourseNodeCommandSchema,
 } from './_domain/schema';
+import { z } from 'zod';
+import { GetCoursesMapService } from './_services/get-courses-map';
+import { GetCoursesToAddService } from './_services/get-courses-to-add';
 
 // Контроллер для работы с картой курсов.
 @injectable()
@@ -26,7 +28,8 @@ export class CoursesMapController extends Controller {
     private getCoursesMapService: GetCoursesMapService,
     private deleteMapNodeService: DeleteMapNodeService,
     private createMapNodeService: CreateMapNodeService,
-    private updateMapNodeService: UpdateMapNodeService
+    private updateMapNodeService: UpdateMapNodeService,
+    private getCoursesToAddService: GetCoursesToAddService
   ) {
     super();
   }
@@ -57,6 +60,12 @@ export class CoursesMapController extends Controller {
         .mutation(({ input }) => {
           revalidatePath('/map');
           return this.updateMapNodeService.exec(input);
+        }),
+      // Процедура добавления курсов
+      coursesToAdd: this.manageMapProcedure
+        .input(z.object({ notFilterCourseId: z.string().optional() }))
+        .query(async ({ input }) => {
+          return this.getCoursesToAddService.exec(input);
         }),
       // Процедура для удаления узла с карты.
       deleteNode: this.manageMapProcedure

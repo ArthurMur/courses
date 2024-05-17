@@ -21,13 +21,10 @@ export function UpsertNodeDialog() {
   return (
     <Dialog onOpenChange={close} open={isOpen}>
       <DialogContent className="sm:max-w-[500px]">
-        {' '}
         {/* Ограничение максимальной ширины контента */}
         <UpsertNodeForm onSuccess={close} node={node}>
-          {' '}
           {/* Форма для добавления/обновления узла */}
           <DialogHeader className="mb-3">
-            {' '}
             {/* Заголовок диалога */}
             <DialogTitle>
               {isEdit ? 'Обновление узла' : 'Добавление узла'}{' '}
@@ -36,7 +33,6 @@ export function UpsertNodeDialog() {
           </DialogHeader>
           <UpsertNodeFormFields node={node} /> {/* Поля формы для узла */}
           <DialogFooter className="mt-3">
-            {' '}
             {/* Футер диалога */}
             <UpsertNodeFormActions /> {/* Действия формы (кнопки) */}
           </DialogFooter>

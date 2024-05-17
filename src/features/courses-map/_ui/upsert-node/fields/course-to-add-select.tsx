@@ -6,12 +6,14 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from '@/shared/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
 import { cn } from '@/shared/ui/utils';
 import { Spinner } from '@/shared/ui/spinner';
 import { useState } from 'react';
 import { CourseId } from '@/kernel/domain/course';
+import { useCoursesToAddOptions } from '../../../_vm/upsert-node/use-courses-to-add-options';
 
 // Компонент для выбора курса
 export function CourseToAddSelect({
@@ -22,8 +24,7 @@ export function CourseToAddSelect({
   onChange: (value: CourseId) => void; // Функция для изменения выбранного курса
 }) {
   const [open, setOpen] = useState(false); // Состояние для управления открытием поповера
-  const courses = [] as { label: string; value: string }[]; // Массив курсов, из которых можно выбрать
-  const isPending = false; // Флаг для отображения спиннера (например, при загрузке данных)
+  const { isPending, options } = useCoursesToAddOptions(value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -31,10 +32,10 @@ export function CourseToAddSelect({
         <Button
           variant="outline"
           role="combobox"
-          className={cn('justify-between', !value && 'text-muted-foreground')} // Стиль кнопки
+          className={cn('justify-between', !value && 'text-muted-foreground')}
         >
           {value
-            ? courses.find((course) => course.value === value)?.label // Отображение выбранного курса
+            ? options?.find((option) => option.value === value)?.label
             : 'Select course'}{' '}
           {isPending ? (
             <Spinner className="ml-2 h-4 w-4 shrink-0" /> // Спиннер при загрузке
@@ -50,24 +51,26 @@ export function CourseToAddSelect({
           {/* Сообщение, если курсы не найдены */}
           <CommandEmpty>No course found.</CommandEmpty>
           <CommandGroup>
-            {courses.map((course) => (
-              <CommandItem
-                value={course.label}
-                key={course.value}
-                onSelect={() => {
-                  onChange(course.value); // Изменение выбранного курса
-                  setOpen(false); // Закрытие попапа
-                }}
-              >
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    course.value === value ? 'opacity-100' : 'opacity-0' // Иконка "Check" для выбранного курса
-                  )}
-                />
-                {course.label}
-              </CommandItem>
-            ))}
+            <CommandList>
+              {options?.map((option) => (
+                <CommandItem
+                  value={option.label}
+                  key={option.value}
+                  onSelect={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      option.value === value ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                  {option.label}
+                </CommandItem>
+              ))}
+            </CommandList>
           </CommandGroup>
         </Command>
       </PopoverContent>
